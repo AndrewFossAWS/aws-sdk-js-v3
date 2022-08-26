@@ -94,6 +94,6 @@ public class AwsPackageFixturesGeneratorIntegrationTest {
 
         assertTrue(manifest.hasFile("LICENSE"));
         assertTrue(manifest.hasFile(".gitignore"));
-        assertFalse(manifest.hasFile("README.md"));
+        assertTrue(manifest.hasFile("README.md"));
     }
 }

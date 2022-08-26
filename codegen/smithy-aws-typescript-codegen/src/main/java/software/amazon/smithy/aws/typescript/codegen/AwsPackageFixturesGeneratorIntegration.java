@@ -57,21 +57,34 @@ public final class AwsPackageFixturesGeneratorIntegration implements TypeScriptI
             writer.write(resource);
         });
 
-        // TODO: May need to generate a different/modified README.md for these cases
-        if (!settings.generateClient() || !isAwsService(settings, model)) {
+        if (settings.getEnableDefaultReadme()) {
             return;
         }
 
+        if (!isAwsService(settings, model) && settings.generateClient()) {
+            return;
+        }
+
+        String template = settings.generateClient() ? "readme_aws_client.md.template" : "readme_aws_server.md.template";
+
         writerFactory.accept("README.md", writer -> {
             ServiceShape service = settings.getService(model);
-            String resource =  IoUtils.readUtf8Resource(getClass(), "README.md.template");
+            String resource =  IoUtils.readUtf8Resource(getClass(), template);
             resource = resource.replaceAll(Pattern.quote("${packageName}"), settings.getPackageName());
 
-            String sdkId = service.getTrait(ServiceTrait.class).map(ServiceTrait::getSdkId).orElse(null);
-            String clientName = Arrays.asList(sdkId.split(" ")).stream()
-                    .map(StringUtils::capitalize)
-                    .collect(Collectors.joining(""));
-            resource = resource.replaceAll(Pattern.quote("${serviceId}"), clientName);
+            String serviceId;
+            if (settings.generateServerSdk()) {
+                serviceId = service.getId().getName();
+            } else if (isAwsService(service)) {
+                String sdkId = service.getTrait(ServiceTrait.class).map(ServiceTrait::getSdkId).orElse(null);
+                serviceId = Arrays.asList(sdkId.split(" ")).stream()
+                        .map(StringUtils::capitalize)
+                        .collect(Collectors.joining(""));
+            } else {
+                serviceId = service.getId().getName();
+            }
+
+            resource = resource.replaceAll(Pattern.quote("${serviceId}"), serviceId);
 
             String rawDocumentation = service.getTrait(DocumentationTrait.class)
                     .map(DocumentationTrait::getValue)

@@ -1,0 +1,80 @@
+<!-- generated file, do not edit directly -->
+
+# ${packageName}
+
+[![NPM version](https://img.shields.io/npm/v/${packageName}/latest.svg)](https://www.npmjs.com/package/${packageName})
+[![NPM downloads](https://img.shields.io/npm/dm/${packageName}.svg)](https://www.npmjs.com/package/${packageName})
+
+## Description
+
+AWS SDK for JavaScript ${serviceId} Server
+
+${documentation}
+
+## Installing
+To install this package, simply type add or install ${packageName}
+using your favorite package manager: 
+- `npm install ${packageName}`
+- `yarn add ${packageName}`
+- `pnpm add ${packageName}`
+
+## Getting Started
+
+Below is an example service handler created for the ${commandName} operation 
+to be deployed to AWS Lambda function and exposed via API Gateway.
+
+```ts
+
+import {ServiceHandler} from "@aws-smithy/server-common";
+import {${commandName}ServerInput, ${commandName}ServerOutput} from "${packageName}";
+import {convertEvent, convertVersion1Response} from "@aws-smithy/server-apigateway";
+import {APIGatewayProxyEvent, APIGatewayProxyResult} from "aws-lambda";
+import {APIGatewayProxyHandler} from "aws-lambda/trigger/api-gateway-proxy";
+
+function getApiGatewayHandler(handler: ServiceHandler<HandlerContext>): APIGatewayProxyHandler {
+  return async (event: APIGatewayProxyEvent) : Promise<APIGatewayProxyResult> => {
+
+    const userArn = event.requestContext.identity.userArn!!;
+
+    return convertVersion1Response(await handler.handle(convertEvent(event), { user: userArn }));
+  }
+}
+
+const ${commandName}Operation: Operation<${commandName}ServerInput, ${commandName}ServerOutput> = async (input, _) => {
+  // Populate your business logic
+};
+
+const serviceHandler: ServiceHandler<HandlerContext> = get${commandName}Handler(${commandName}Operation);
+
+export const lambdaHandler: APIGatewayProxyHandler = getApiGatewayHandler(serviceHandler);
+
+```
+
+See [Building Lambda functions with TypeScript](https://docs.aws.amazon.com/lambda/latest/dg/lambda-typescript.html) for full details
+
+## Getting Help
+
+Please use these community resources for getting help.
+We use the GitHub issues for tracking bugs and feature requests, but have limited bandwidth to address them.
+
+- Visit [Developer Guide](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/welcome.html)
+  or [API Reference](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html).
+- Check out the blog posts tagged with [`aws-sdk-js`](https://aws.amazon.com/blogs/developer/tag/aws-sdk-js/)
+  on AWS Developer Blog.
+- Ask a question on [StackOverflow](https://stackoverflow.com/questions/tagged/aws-sdk-js) and tag it with `aws-sdk-js`.
+- Join the AWS JavaScript community on [gitter](https://gitter.im/aws/aws-sdk-js-v3).
+- If it turns out that you may have found a bug, please [open an issue](https://github.com/aws/aws-sdk-js-v3/issues/new/choose).
+
+To test your universal JavaScript code in Node.js, browser and react-native environments,
+visit our [code samples repo](https://github.com/aws-samples/aws-sdk-js-tests).
+
+## Contributing
+
+This client code is generated automatically. Any modifications will be overwritten the next time the `${packageName}` package is updated.
+To contribute to client you can check our [generate clients scripts](https://github.com/aws/aws-sdk-js-v3/tree/main/scripts/generate-clients).
+
+## License
+
+This SDK is distributed under the
+[Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0),
+see LICENSE for more information.
